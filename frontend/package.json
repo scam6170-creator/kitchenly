@@ -1,0 +1,35 @@
+{
+  "name": "kitchenly-frontend",
+  "version": "1.0.0",
+  "description": "KITCHENLY - Inventory & Sales Management System Frontend",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.16.0",
+    "typescript": "^5.2.2",
+    "axios": "^1.5.0",
+    "zustand": "^4.4.1",
+    "lucide-react": "^0.292.0",
+    "recharts": "^2.10.0",
+    "date-fns": "^2.30.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.28",
+    "@types/react-dom": "^18.2.11",
+    "@types/node": "^20.8.0",
+    "tailwindcss": "^3.3.5",
+    "postcss": "^8.4.31",
+    "autoprefixer": "^10.4.16",
+    "vite": "^4.5.0",
+    "@vitejs/plugin-react": "^4.1.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  }
+}
