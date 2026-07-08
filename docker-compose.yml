@@ -2,12 +2,12 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:14-alpine
-    container_name: kitchenly_db
+    image: postgres:15-alpine
+    container_name: kitchenly-db
     environment:
-      POSTGRES_USER: kitchenly
-      POSTGRES_PASSWORD: kitchenly_password
-      POSTGRES_DB: kitchenly_db
+      POSTGRES_USER: ${DB_USER:-kitchenly}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-kitchenly123}
+      POSTGRES_DB: ${DB_NAME:-kitchenly}
     ports:
       - "5432:5432"
     volumes:
@@ -17,40 +17,53 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - kitchenly-network
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: kitchenly_backend
+    container_name: kitchenly-backend
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://kitchenly:kitchenly_password@postgres:5432/kitchenly_db
-      JWT_SECRET: your_jwt_secret_key_change_in_production
-      JWT_EXPIRE: 7d
+      PORT: 5000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-kitchenly}
+      DB_PASSWORD: ${DB_PASSWORD:-kitchenly123}
+      DB_NAME: ${DB_NAME:-kitchenly}
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
     ports:
       - "5000:5000"
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
-      - ./backend/uploads:/app/uploads
+      - ./backend/src:/app/src
+    networks:
+      - kitchenly-network
+    restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: kitchenly_frontend
+    container_name: kitchenly-frontend
     environment:
-      REACT_APP_API_URL: http://localhost:5000
+      VITE_API_URL: http://localhost:5000
     ports:
       - "3000:3000"
     depends_on:
       - backend
+    networks:
+      - kitchenly-network
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+    driver: local
 
 networks:
-  default:
-    name: kitchenly_network
+  kitchenly-network:
+    driver: bridge
